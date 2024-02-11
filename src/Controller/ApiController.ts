@@ -9,6 +9,8 @@ import { saveTicket } from '../Action/SaveTicket'
 import { updateTicket } from '../Action/UpdateTicket'
 import { deleteTicket } from '../Action/DeleteTicket'
 import { listTicket } from '../Action/ListTicket'
+import { TicketLogList } from '../Action/TicketLogList'
+import { TicketLogSearchParams, TicketLogSearchValidator } from '../Request/TicketLogSearchParams'
 
 
 export default class ApiController extends Controller {
@@ -60,12 +62,25 @@ export default class ApiController extends Controller {
     }
   }
 
+  async log(req: Request<unknown, unknown, unknown, TicketLogSearchParams>, res: Response, next: NextFunction) {
+    try {
+      log('received rms ticket log api -> ', req.query)
+      const response = await TicketLogList(req.query)
+      log('rms ticket log api sent response -> ', response)
+      res.json(response)
+    } catch (error) {
+      log(error)
+      next(error)
+    }
+  }
+
 
   register() {
     this.router.post('/ticket-create', [TicketSaveValidator], this.receive.bind(this)),
     this.router.post('/ticket-update', [TicketUpdateValidator], this.update.bind(this)),
     this.router.get('/ticket-delete', [TicketDeleteValidator], this.delete.bind(this)),
-    this.router.get('/ticket-list', [TicketSearchValidator], this.list.bind(this))
+    this.router.get('/ticket-list', [TicketSearchValidator], this.list.bind(this)),
+    this.router.get('/ticket-log',[TicketLogSearchValidator], this.log.bind(this))
     return this.router
   }
 }
