@@ -1,0 +1,14 @@
+.vscode
+node_modules/
+.idea
+dist
+.env
+package-lock.json
+jest.config.js
+docker-compose.yml
+Dockerfile
+.prettierrc
+.eslintrc.json
+.dockerignore
+Jenkinsfile
+JenkinsfileProd
