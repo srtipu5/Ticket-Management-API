@@ -63,41 +63,47 @@ export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<nu
       },
     })
 
-    let items: { [key: string]: any } = {}
-
-    for (const key in before_ticket[0]) {
-      if (key === 'created_at' || key === 'updated_at') continue
-      if (
-        before_ticket[0].hasOwnProperty(key) &&
-        after_ticket[0].hasOwnProperty(key) &&
-        before_ticket[0][key as keyof TicketModel] !== after_ticket[0][key as keyof TicketModel]
-      ) {
-        if (key === 'meta_data') {
-          if (compareMetaData(before_ticket[0][key], after_ticket[0][key])) {
-            items[key] = after_ticket[0][key as keyof TicketModel]
-          }
-        } else if (key === 'files') {
-          if (!compareArrays(before_ticket[0][key], after_ticket[0][key])) {
-            items[key] = after_ticket[0][key as keyof TicketModel]
-          }
-        } else {
-          items[key] = after_ticket[0][key as keyof TicketModel]
-        }
-      }
-    }
-
-    await saveTicketLog({
-      ticket_id: id,
-      items: JSON.parse(JSON.stringify(items)),
-      created_by: updated_by,
-      action: TicketLogType.UPDATE,
-    })
+    // save ticket log
+    if(row?.raw > 0) await saveLog(before_ticket[0],after_ticket[0],id,updated_by)
 
     return row?.affected || 0
   } catch (error) {
     console.error(error)
     throw new Error('Something went wrong from rms-update-ticket !!')
   }
+}
+
+async function saveLog(before_ticket: any, after_ticket: any, ticket_id: number, created_by: number) {
+  let items: { [key: string]: any } = {}
+
+    for (const key in before_ticket) {
+      if (key === 'created_at' || key === 'updated_at') continue
+      if (
+        before_ticket.hasOwnProperty(key) &&
+        after_ticket.hasOwnProperty(key) &&
+        before_ticket[key as keyof TicketModel] !== after_ticket[key as keyof TicketModel]
+      ) {
+        if (key === 'meta_data') {
+          if (compareMetaData(before_ticket[key], after_ticket[key])) {
+            items[key] = after_ticket[key as keyof TicketModel]
+          }
+        } else if (key === 'files') {
+          if (!compareArrays(before_ticket[key], after_ticket[key])) {
+            items[key] = after_ticket[key as keyof TicketModel]
+          }
+        } else {
+          items[key] = after_ticket[key as keyof TicketModel]
+        }
+      }
+    }
+
+    await saveTicketLog({
+      ticket_id,
+      items: JSON.parse(JSON.stringify(items)),
+      created_by,
+      action: TicketLogType.UPDATE,
+    })
+
 }
 
 function compareMetaData(before: any, after: any): boolean {
