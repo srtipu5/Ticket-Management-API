@@ -19,13 +19,10 @@ export async function deleteTicket(reqParms: TicketDeleteRequestParams): Promise
     let row
     if (ticket[0].opened_by === deleted_by) {
       row = await TicketModel.delete({ id })
-      // save ticket log
-      await saveTicketLog({
-        ticket_id: id,
-        created_by: deleted_by,
-        action: TicketLogType.DELETE,
-      })
     }
+
+    // save ticket log
+    if (row?.raw > 0) await saveTicketLog({ticket_id: id, created_by: deleted_by, action: TicketLogType.DELETE})
 
     return row?.affected || 0
   } catch (error) {
