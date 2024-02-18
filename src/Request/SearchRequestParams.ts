@@ -7,14 +7,14 @@ export interface TicketSearchRequestParms {
   id?: number
   title?: string
   description?: string
-  category?: number
-  sub_category?: number
+  category?: string
+  sub_category?: string
   site_uid?: number
   company_uid?: number
   opened_by?: number
   assigned_to?: number
-  status?: number
-  priority?: number
+  status?: string
+  priority?: string
 }
 
 export const TicketSearchValidator = ValidatorMiddleware([
@@ -23,12 +23,12 @@ export const TicketSearchValidator = ValidatorMiddleware([
   query('id').optional().isInt().toInt(),
   query('title').optional().isString().trim(),
   query('description').optional().isString().trim(),
-  query('category').optional().isInt().toInt(),
-  query('sub_category').optional().isInt().toInt(),
+  query('category').optional().isString().trim(),
+  query('sub_category').optional().isString().trim(),
   query('site_uid').optional().isInt().toInt(),
   query('company_uid').optional().isInt().toInt(),
   query('opened_by').optional().isInt().toInt(),
   query('assigned_to').optional().isInt().toInt(),
-  query('status').optional().isInt().toInt(),
-  query('priority').optional().isInt().toInt(),
+  query('status').optional().isString().trim(),
+  query('priority').optional().isString().trim(),
 ])

@@ -2,16 +2,16 @@ import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, CreateDateColumn, U
 
 interface TicketDoc {
   id: number
-  title?: string
+  title: string
   description?: string
-  category?: number
-  sub_category?: number
+  category: string
+  sub_category: string
   site_uid: number
   company_uid: number
   opened_by: number
   assigned_to?: number
-  status?: number
-  priority?: number
+  status: string
+  priority: string
   meta_data?: JSON 
   files?: JSON
   created_at: string
@@ -23,17 +23,17 @@ export class TicketModel extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number
 
-  @Column({ nullable: true })
-  title?: string
+  @Column()
+  title!: string
 
   @Column({ nullable: true })
   description?: string
 
-  @Column({ nullable: true })
-  category?: number
+  @Column()
+  category!: string
 
-  @Column({ nullable: true })
-  sub_category?: number
+  @Column()
+  sub_category!: string
 
   @Column()
   site_uid!: number
@@ -47,11 +47,11 @@ export class TicketModel extends BaseEntity {
   @Column({ nullable: true })
   assigned_to?: number
 
-  @Column({ nullable: true })
-  status?: number
+  @Column()
+  status!: string
 
-  @Column({ nullable: true })
-  priority?: number
+  @Column()
+  priority!: string
 
   @Column({ type: 'jsonb', nullable: true })
   meta_data?: JSON

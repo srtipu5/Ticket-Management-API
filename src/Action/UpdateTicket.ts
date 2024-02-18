@@ -6,7 +6,7 @@ import { saveTicketLog } from './SaveTicketLog'
 import { TicketLogType } from '../Util/TicketLogType'
 import { MetaData } from '../Util/MetaType'
 
-export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<number> {
+export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<TicketModel[]> {
   try {
     const {
       id,
@@ -31,7 +31,7 @@ export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<nu
       },
     })
 
-    if (before_ticket.length < 1) return 0
+    if (before_ticket.length < 1) return []
 
     const commonFields = {
       status,
@@ -66,7 +66,7 @@ export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<nu
     // save ticket log
     if(row?.raw > 0) await saveLog(before_ticket[0],after_ticket[0],id,updated_by)
 
-    return row?.affected || 0
+    return after_ticket
   } catch (error) {
     console.error(error)
     throw new Error('Something went wrong from rms-update-ticket !!')

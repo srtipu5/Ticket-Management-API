@@ -4,7 +4,7 @@ import { TicketModel } from '../Database/Model/Ticket'
 import { saveTicketLog } from './SaveTicketLog'
 import { TicketLogType } from '../Util/TicketLogType'
 
-export async function saveTicket(reqBody: TicketSaveRequestBody): Promise<number> {
+export async function saveTicket(reqBody: TicketSaveRequestBody): Promise<TicketModel[]> {
   try {
     const {
       title,
@@ -21,6 +21,7 @@ export async function saveTicket(reqBody: TicketSaveRequestBody): Promise<number
       files,
     } = reqBody
 
+    
     const ticket = await TicketModel.save([
       {
         title,
@@ -34,7 +35,7 @@ export async function saveTicket(reqBody: TicketSaveRequestBody): Promise<number
         status,
         priority,
         meta_data,
-        files,
+        files
       },
     ])
 
@@ -47,7 +48,14 @@ export async function saveTicket(reqBody: TicketSaveRequestBody): Promise<number
       })
     }
 
-    return ticket.length || 0
+    const last_ticket = await TicketModel.find({
+      order: {
+        created_at: 'DESC',
+      },
+      take: 1,
+    })
+
+    return last_ticket
   } catch (error) {
     console.error(error)
     throw new Error('Something went wrong from rms-save-ticket !!')
