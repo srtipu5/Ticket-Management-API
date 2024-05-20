@@ -1,6 +1,7 @@
-import { log, redis } from 'rms-lib'
+// import { log, redis, TicketLogModel } from 'rms-lib'
 import { TicketLogModel } from '../Database/Model/TicketLog'
 import { TicketDeleteRequestParams } from '../Request/DeleteRequestParams'
+
 
 export async function deleteTicketLog(reqParms: TicketDeleteRequestParams): Promise<number> {
   try {

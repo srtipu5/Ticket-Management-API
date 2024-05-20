@@ -1,4 +1,4 @@
-import { log, redis } from 'rms-lib'
+// import { log, redis, TicketModel } from 'rms-lib'
 import { FindManyOptions } from 'typeorm'
 import { TicketModel } from '../Database/Model/Ticket'
 import { TicketSearchRequestParms } from '../Request/SearchRequestParams'
@@ -23,6 +23,7 @@ export async function listTicket(reqParms: TicketSearchRequestParms): Promise<Ti
       site_uid,
       company_uid,
       opened_by,
+      assigned_team,
       assigned_to,
       status,
       priority,
@@ -38,6 +39,7 @@ export async function listTicket(reqParms: TicketSearchRequestParms): Promise<Ti
         site_uid,
         company_uid,
         opened_by,
+        assigned_team,
         assigned_to,
         status,
         priority

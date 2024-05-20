@@ -1,4 +1,4 @@
-import { log, redis } from 'rms-lib'
+// import { log, redis, TicketLogModel } from 'rms-lib'
 import { FindManyOptions } from 'typeorm'
 import { TicketLogModel } from '../Database/Model/TicketLog'
 import { TicketLogSearchParams } from '../Request/TicketLogSearchParams'
@@ -11,7 +11,7 @@ interface Log {
   items: TicketLogModel[]
 }
 
-export async function TicketLogList(reqParms: TicketLogSearchParams): Promise<Log> {
+export async function ticketLogList(reqParms: TicketLogSearchParams): Promise<Log> {
   try {
     const { page = DEFAULT_PAGE, limit = DEFAULT_LIMIT, ...queryParams } = reqParms
     const {

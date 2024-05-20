@@ -1,4 +1,4 @@
-import { log, redis, WebSocketService } from 'rms-lib'
+// import { log, redis, TicketLogModel } from 'rms-lib'
 import { SaveTicketLog } from '../Request/SaveTicketLog'
 import { TicketLogModel } from '../Database/Model/TicketLog'
 
@@ -14,12 +14,6 @@ export async function saveTicketLog(data: SaveTicketLog): Promise<TicketLogModel
         action
       },
     ])
-
-    // await WebSocketService.send({
-    //   userUid: userUid,
-    //   event: 'RMS_TICKET_CREATE',
-    //   payload: event.transform(),
-    // })
 
     const last_ticket_log = await TicketLogModel.find({
       order: {

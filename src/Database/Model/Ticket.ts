@@ -1,7 +1,8 @@
 import { Entity, Column, BaseEntity, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
-interface TicketDoc {
+interface Ticket {
   id: number
+  token: number
   title: string
   description?: string
   category: string
@@ -9,6 +10,7 @@ interface TicketDoc {
   site_uid: number
   company_uid: number
   opened_by: number
+  assigned_team?: number
   assigned_to?: number
   status: string
   priority: string
@@ -22,6 +24,9 @@ interface TicketDoc {
 export class TicketModel extends BaseEntity {
   @PrimaryGeneratedColumn()
   id!: number
+
+  @Column()
+  token!: number
 
   @Column()
   title!: string
@@ -45,6 +50,9 @@ export class TicketModel extends BaseEntity {
   opened_by!: number
 
   @Column({ nullable: true })
+  assigned_team?: number
+
+  @Column({ nullable: true })
   assigned_to?: number
 
   @Column()
@@ -65,9 +73,10 @@ export class TicketModel extends BaseEntity {
   @CreateDateColumn()
   created_at!: Date
 
-  transform(): TicketDoc {
+  transform(): Ticket {
     return {
       id: this.id,
+      token: this.token,
       title: this.title,
       description: this.description,
       category: this.category,
@@ -75,6 +84,7 @@ export class TicketModel extends BaseEntity {
       site_uid: this.site_uid,
       company_uid: this.company_uid,
       opened_by: this.opened_by,
+      assigned_team: this.assigned_team,
       assigned_to: this.assigned_to,
       status: this.status,
       priority: this.priority,

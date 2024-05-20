@@ -9,6 +9,7 @@ export interface TicketSaveRequestBody {
   site_uid: number
   company_uid: number
   opened_by: number
+  assigned_team?: number
   assigned_to?: number
   status: string  
   priority: string
@@ -25,6 +26,7 @@ export const TicketSaveValidator = ValidatorMiddleware([
   body('site_uid').isInt().toInt(),
   body('company_uid').isInt().toInt(),
   body('opened_by').isInt().toInt(),
+  body('assigned_team').optional().isInt().toInt(),
   body('assigned_to').optional().isInt().toInt(),
   body('status').isString().trim(),
   body('priority').isString().trim(),

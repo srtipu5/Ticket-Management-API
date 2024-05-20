@@ -1,15 +1,20 @@
-import { log, redis } from 'rms-lib'
-
+import { log, redis, SMSGateway, WebSocketService } from 'rms-lib'
+// import { TicketModel } from 'rms-lib'
 import { TicketModel } from '../Database/Model/Ticket'
 import { TicketUpdateRequestBody } from '../Request/UpdateRequestBody'
 import { saveTicketLog } from './SaveTicketLog'
 import { TicketLogType } from '../Util/TicketLogType'
 import { MetaData } from '../Util/MetaType'
+import { findUserPhone } from './FindUserPhone'
+import { smsContent } from './SmsContent'
+import { getCompanyUserUid } from './GetCompanyUserUid'
+import { findSiteName } from './FindSiteName'
 
 export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<TicketModel[]> {
   try {
     const {
       id,
+      //token
       //title,
       description,
       category,
@@ -17,6 +22,7 @@ export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<Ti
       //site_uid,
       //company_uid,
       //opened_by,
+      assigned_team,
       assigned_to,
       priority,
       status,
@@ -39,21 +45,23 @@ export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<Ti
       files
     }
     
-    const specificFields = before_ticket[0].opened_by === updated_by
+    const openedByFields = before_ticket[0].opened_by === updated_by
       ? {
-          //title,
           description,
           category,
           sub_category,
-          //site_uid,
-          //company_uid,
-          //opened_by,
-          assigned_to,
+          assigned_team,
           priority,
         }
       : {}
+
+      const assignedTeamFields = (before_ticket[0].assigned_team === updated_by ||  before_ticket[0].opened_by === updated_by)
+      ? {
+          assigned_to
+        }
+      : {}
     
-    const updatedFields = { ...commonFields, ...specificFields }
+    const updatedFields = { ...commonFields, ...openedByFields, ...assignedTeamFields }
     
     const row = await TicketModel.update({ id }, updatedFields)
     
@@ -63,8 +71,28 @@ export async function updateTicket(reqBody: TicketUpdateRequestBody): Promise<Ti
       },
     })
 
+    if(before_ticket[0].assigned_team !== assigned_team){
+      const phone = await findUserPhone(assigned_team)
+      const site_name = await findSiteName(after_ticket[0].site_uid)
+      // if(site_name && phone) await SMSGateway.send(phone, await smsContent(site_name, after_ticket[0].token))
+    } 
+
+    if(before_ticket[0].assigned_to !== assigned_to){
+      const phone = await findUserPhone(assigned_to)
+      const site_name = await findSiteName(after_ticket[0].site_uid)
+      // if(site_name && phone) await SMSGateway.send(phone, await smsContent(site_name, after_ticket[0].token))
+    } 
+
+    const user_uid = await getCompanyUserUid(after_ticket[0].opened_by)
+    if (user_uid)
+      await WebSocketService.send({
+        userUid: user_uid,
+        event: 'RMS_TICKET_UPDATE',
+        payload: after_ticket[0],
+      })
+
     // save ticket log
-    if(row?.raw > 0) await saveLog(before_ticket[0],after_ticket[0],id,updated_by)
+    if(row?.affected) await saveLog(before_ticket[0],after_ticket[0],id,updated_by)
 
     return after_ticket
   } catch (error) {

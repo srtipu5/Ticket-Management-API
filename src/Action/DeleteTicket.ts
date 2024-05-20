@@ -1,4 +1,4 @@
-import { log, redis } from 'rms-lib'
+// import { log, redis, TicketModel } from 'rms-lib'
 import { TicketLogType } from '../Util/TicketLogType'
 import { saveTicketLog } from './SaveTicketLog'
 import { TicketModel } from '../Database/Model/Ticket'
@@ -22,7 +22,7 @@ export async function deleteTicket(reqParms: TicketDeleteRequestParams): Promise
     }
 
     // save ticket log
-    if (row?.raw > 0) await saveTicketLog({ticket_id: id, created_by: deleted_by, action: TicketLogType.DELETE})
+    if (row?.affected) await saveTicketLog({ticket_id: id, created_by: deleted_by, action: TicketLogType.DELETE})
 
     return row?.affected || 0
   } catch (error) {

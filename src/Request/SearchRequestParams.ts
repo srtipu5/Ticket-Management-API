@@ -5,6 +5,7 @@ export interface TicketSearchRequestParms {
   page?: number
   limit?: number
   id?: number
+  token?: number
   title?: string
   description?: string
   category?: string
@@ -12,6 +13,7 @@ export interface TicketSearchRequestParms {
   site_uid?: number
   company_uid?: number
   opened_by?: number
+  assigned_team?:number
   assigned_to?: number
   status?: string
   priority?: string
@@ -21,6 +23,7 @@ export const TicketSearchValidator = ValidatorMiddleware([
   query('page').optional().isInt().toInt(),
   query('limit').optional().isInt().toInt(),
   query('id').optional().isInt().toInt(),
+  query('token').optional().isInt().toInt(),
   query('title').optional().isString().trim(),
   query('description').optional().isString().trim(),
   query('category').optional().isString().trim(),
@@ -28,6 +31,7 @@ export const TicketSearchValidator = ValidatorMiddleware([
   query('site_uid').optional().isInt().toInt(),
   query('company_uid').optional().isInt().toInt(),
   query('opened_by').optional().isInt().toInt(),
+  query('assigned_team').optional().isInt().toInt(),
   query('assigned_to').optional().isInt().toInt(),
   query('status').optional().isString().trim(),
   query('priority').optional().isString().trim(),
